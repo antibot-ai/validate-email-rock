@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -e
+
+rockspec="$(< *.rockspec)"
+name="$(echo "${rockspec}" |
+  grep 'package\s*=' |
+  sed 's/.*package\s*=\s*[\x27"]\(.*\)[\x27"].*/\1/'
+)"
+version="$(echo "${rockspec}" |
+  grep 'version\s*=' |
+  sed 's/.*version\s*=\s*[\x27"]\(.*\)[\x27"].*/\1/'
+)"
+version="${version:-scm-1}"
+package="${name}-${version}"
+files=($(< .rockfiles))
+
+echo "Preparing rock tarball..."
+
+mkdir "${package}/"
+cp -r "${files[@]}" "${package}/"
+tar cvzf "${package}.tar.gz" "${package}/"
+
+echo "Packing source rock..."
+
+luarocks pack "${package}.rockspec"
+
+echo "Cleanig working directory..."
+
+rm -vrf "${package}/"
+rm -v "${package}.tar.gz"
