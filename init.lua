@@ -61,30 +61,45 @@ local function validateEmail(email)
     end
   end
 
-  -- Если доменная часть это адрес ipv4
+  -- Проверка доменной части на ip адрес
   --
-  local ipv4 = domainPart:match('^%[.+%]$')
+  local ip = domainPart:match('^%[(.+)%]$')
 
-  if ipv4 then
-    local a, b, c, d = domainPart:match('%[(%d+)%.(%d+)%.(%d+)%.(%d+)%]')
+  if ip then
+    local isIp = false
 
-    if a and b and c and d then
-      if not ((tonumber(a) < 256) and
-        (tonumber(b) < 256) and
-        (tonumber(c) < 256) and
-        (tonumber(d) < 256))
+    -- Если доменная часть это адрес ipv4
+    --
+    local ipv4 = {ip:match('^(%d+)%.(%d+)%.(%d+)%.(%d+)$')}
+
+    if ipv4[1] and ipv4[2] and ipv4[3] and ipv4[4] then
+      local a = tonumber(ipv4[1])
+      local b = tonumber(ipv4[2])
+      local c = tonumber(ipv4[3])
+      local d = tonumber(ipv4[4])
+
+      if not ((a < 256) and (b < 256) and (c < 256) and (d < 256))
       then
         return false
       end
+
+      isIp = true
     end
-  end
 
-  -- Если доменная часть это адрес ipv6
-  --
-  local ipv6 = domainPart:match('^%[ipv6:(.+)%]$')
+    -- Если доменная часть это адрес ipv6
+    --
+    local ipv6 = ip:match('^ipv6:(.+)$')
 
-  if ipv6 then
-    if not ipv6:find(('([a-f0-9]+):'):rep(7)..'([a-f0-9]+)') then
+    if ipv6 then
+      local re = '^([a-f0-9]+):([a-f0-9]+):([a-f0-9]+):([a-f0-9]+):([a-f0-9]+):([a-f0-9]+):([a-f0-9]+):([a-f0-9]+)$'
+      if not ipv6:find(re) then
+        return false
+      end
+
+      isIp = true
+    end
+
+    if not isIp then
       return false
     end
   end
