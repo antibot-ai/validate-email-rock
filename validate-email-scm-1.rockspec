@@ -10,7 +10,7 @@ source  = {
 build = {
   type = 'builtin',
   modules = {
-    ['validate-email'] = 'init.lua',
+    [package] = 'lua/'..package..'/init.lua'
   }
 }
 dependencies = {

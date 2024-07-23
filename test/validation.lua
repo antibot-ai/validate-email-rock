@@ -3,7 +3,7 @@ local luatest = require('luatest')
 local g = luatest.group('validation')
 
 -- Функция валидации
-local validateEmail = require('init')
+local validateEmail = require('lua.validate-email.init')
 
 -- Тесты
 g.test_valid_email = function()

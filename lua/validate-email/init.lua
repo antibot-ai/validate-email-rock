@@ -1,14 +1,19 @@
 --- Валидация адреса электронной почты
 --
+-- @module validateEmail
 local utf8 = require('utf8')
+local validateEmail
 
 local RU_LETTERS = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
 
 --- Проверяет адрес электронной почты на корректность
 --
--- @param  email Строка адреса электройнной почты
+-- @param email (string) Строка адреса электройнной почты
 -- @return valid Корректен ли переданный адрес
-local function validateEmail(email)
+-- @usage
+  -- local valid = validateEmail('admin@antibot.ru')
+  -- print(valid) -- true
+function validateEmail(email)
   -- Захват локальной и доменной части
   --
   local localPart, domainPart = utf8.lower(email)
@@ -107,6 +112,4 @@ local function validateEmail(email)
   return true
 end
 
---- validateEmail
--- @table export
 return validateEmail
